@@ -1,0 +1,23 @@
+[
+  {
+    "Personalnummer": "Test-001",
+    "Name": "Lieschen Müller",
+    "Gehalt": "2000.00",
+    "Aenderungsdatum": "2019-10-06T12:01:36.0331027+01:00",
+    "Bild": null
+  },
+  {
+    "Personalnummer": "001_Ä_001",
+    "Name": "Al Capone",
+    "Gehalt": "1963.12",
+    "Aenderungsdatum": "2019-12-06T12:01:36.0438092+01:00",
+    "Bild": null
+  },
+  {
+    "Personalnummer": "123987",
+    "Name": "Peter Mars",
+    "Gehalt": "1978.50",
+    "Aenderungsdatum": "2019-11-28T12:01:36.0438218+01:00",
+    "Bild": null
+  }
+]
