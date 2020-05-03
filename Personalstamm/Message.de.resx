@@ -120,6 +120,9 @@
   <data name="browseImageNote" xml:space="preserve">
     <value>Zum Bild Ändern anklicken</value>
   </data>
+  <data name="choosePicture" xml:space="preserve">
+    <value>Wählen..</value>
+  </data>
   <data name="confirmationDeleteMessage" xml:space="preserve">
     <value>Sind Sie sicher, dass Sie diesen Eintrag löschen möchten?</value>
   </data>

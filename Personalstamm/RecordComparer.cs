@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Personalstamm
 {
-public class RecordComparer : IEqualityComparer<JsonRecord>
+    /// <summary>
+    /// Used to compare JsonRecord objects
+    /// </summary>
+    public class RecordComparer : IEqualityComparer<JsonRecord>
     {
         public int GetHashCode(JsonRecord co)
         {

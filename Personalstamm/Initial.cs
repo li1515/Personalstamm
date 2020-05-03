@@ -12,7 +12,6 @@ using System.Resources;
 using System.Security;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Personalstamm
@@ -44,9 +43,7 @@ namespace Personalstamm
             this.Controls.Clear();
             this.InitializeComponent();
 
-            mainPanel.Visible = true;
-            loadData();
-
+            LoadMainDataPanel();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -55,9 +52,7 @@ namespace Personalstamm
             this.Controls.Clear();
             this.InitializeComponent();
 
-            mainPanel.Visible = true;
-            loadData();
-
+            LoadMainDataPanel();
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -86,7 +81,7 @@ namespace Personalstamm
             //defining difference and updating date
             var changedRecords = savedResultList.Except(updatedResultList, new RecordComparer()).ToList();
 
-            foreach (var item in updatedResultList.Where(n => changedRecords.Any(l=> l.Personalnummer == n.Personalnummer)))
+            foreach (var item in updatedResultList.Where(n => changedRecords.Any(l => l.Personalnummer == n.Personalnummer)))
             {
                 item.Aenderungsdatum = DateTime.Now;
             }
@@ -112,58 +107,47 @@ namespace Personalstamm
             UpdateDataGridCOntrolsVisibility();
         }
 
-        private void UpdateDataGridCOntrolsVisibility()
-        {
-            panel2.Visible = true;
-            button7.Visible = false;
-            button8.Visible = false;
-            button3.Visible = false;
-        }
-
         private void button5_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(textBox1.Text) && !string.IsNullOrEmpty(textBox2.Text)&& !string.IsNullOrEmpty(textBox3.Text))
-            { 
-            var personalNumber = textBox1.Text;
-            var name = textBox2.Text;
-            float salary;
-            float.TryParse(textBox3.Text, out salary);
-            byte[] imageByteArray = null;
-            if (File.Exists(openFileDialog1.FileName) && CheckIfFileIsImage(openFileDialog1.FileName))
+            if (!string.IsNullOrEmpty(textBox1.Text) && !string.IsNullOrEmpty(textBox2.Text) && !string.IsNullOrEmpty(textBox3.Text))
             {
-                Image image = Image.FromFile(openFileDialog1.FileName);
-                var resizedImage = Imager.Resize(image, 200, 300, true);
-                imageByteArray = image != null ? imageToByteArray(resizedImage) : null;
-            }
-            
-            var record = new JsonRecord()
-            {
-                Personalnummer = personalNumber,
-                Name = name,
-                Gehalt = salary,
-                Aenderungsdatum = DateTime.Now,
-                Bild = imageByteArray
-            };
+                var personalNumber = textBox1.Text;
+                var name = textBox2.Text;
+                float salary;
+                float.TryParse(textBox3.Text, out salary);
+                byte[] imageByteArray = null;
+                if (File.Exists(openFileDialog1.FileName) && CheckIfFileIsImage(openFileDialog1.FileName))
+                {
+                    Image image = Image.FromFile(openFileDialog1.FileName);
+                    var resizedImage = Imager.Resize(image, 200, 300, true);
+                    imageByteArray = image != null ? imageToByteArray(resizedImage) : null;
+                }
 
-            var input = File.ReadAllText(DataPath);
-            var results = JsonConvert.DeserializeObject<List<JsonRecord>>(input);
-            var duplicates = results.Where(x => x.Personalnummer == personalNumber);
+                //new JsonRecord object 
+                var record = new JsonRecord()
+                {
+                    Personalnummer = personalNumber,
+                    Name = name,
+                    Gehalt = salary,
+                    Aenderungsdatum = DateTime.Now,
+                    Bild = imageByteArray
+                };
 
+                var input = File.ReadAllText(DataPath);
+                var results = JsonConvert.DeserializeObject<List<JsonRecord>>(input);
+                var duplicates = results.Where(x => x.Personalnummer == personalNumber);
 
-            results.Add(record);
+                results.Add(record);
 
-            SaveJson(results);
+                SaveJson(results);
 
-            loadData();
+                loadData();
 
-                panel2.Visible = false;
-                button7.Visible = true;
-                button8.Visible = true;
-                button3.Visible = true;
+                HideAddNewRecordPanel();
 
                 ClearRecordBoxesValues();
             }
-            else 
+            else
             {
                 MessageBox.Show("Empty values are not allowed!");
                 button5.Enabled = false;
@@ -176,17 +160,12 @@ namespace Personalstamm
             textBox2.Text = string.Empty;
             textBox3.Text = string.Empty;
             openFileDialog1.FileName = string.Empty;
-
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            panel2.Visible = false;
-            button7.Visible = true;
-            button8.Visible = true;
-            button3.Visible = true;
+            HideAddNewRecordPanel();
             ClearRecordBoxesValues();
-
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -246,6 +225,9 @@ namespace Personalstamm
             dataGridView1.Columns[4].ToolTipText = ResManager.GetString("browseImageNote");
             dataGridView1.Columns["Personalnummer"].ReadOnly = true;
             dataGridView1.Columns["Aenderungsdatum"].ReadOnly = true;
+            dataGridView1.Width = panel1.Width;
+            dataGridView1.Refresh();
+
 
             ContextMenuStrip m = new ContextMenuStrip();
             ToolStripMenuItem mnuDelete = new ToolStripMenuItem(ResManager.GetString("deleteContextMenu"));
@@ -307,16 +289,14 @@ namespace Personalstamm
         /// <returns></returns>
         private bool CheckIfFileIsImage(string path)
         {
+            List<string> ImageExtensions = new List<string> { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG" };
 
-          List<string> ImageExtensions = new List<string> { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG" };
-
-                if (ImageExtensions.Contains(Path.GetExtension(path).ToUpperInvariant()))
-                {
-                        return true;
-                }
+            if (ImageExtensions.Contains(Path.GetExtension(path).ToUpperInvariant()))
+            {
+                return true;
+            }
             return false;
         }
-    
 
         private bool ValidateEmptyValues(TextBox textBox)
         {
@@ -340,7 +320,6 @@ namespace Personalstamm
 
         private void button8_Click(object sender, EventArgs e)
         {
-
             var result = ReadSavedJson();
 
             foreach (DataGridViewRow item in this.dataGridView1.SelectedRows)
@@ -354,9 +333,8 @@ namespace Personalstamm
                 }
                 else
                 {
-                    // If 'No', do something here.
                 }
-                
+
             }
             SaveJson(result);
             this.dataGridView1.DataSource = result;
@@ -368,10 +346,10 @@ namespace Personalstamm
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (dataGridView1.CurrentCell.ColumnIndex == 4)
-            { 
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                try
+                if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    try
                     {
                         var filePath = openFileDialog1.FileName;
                         byte[] imageByteArray = null;
@@ -389,15 +367,13 @@ namespace Personalstamm
                         SaveJson(resultList);
                         //refresh the grid
                         loadData();
-
-
                     }
                     catch (SecurityException ex)
-                {
-                    MessageBox.Show($"Error.\n\nError message: {ex.Message}\n\n" +
-                    $"Details:\n\n{ex.StackTrace}");
+                    {
+                        MessageBox.Show($"Error.\n\nError message: {ex.Message}\n\n" +
+                        $"Details:\n\n{ex.StackTrace}");
+                    }
                 }
-            }
             }
         }
 
@@ -421,22 +397,25 @@ namespace Personalstamm
 
         private void mnuDelete_Click(object sender, EventArgs e)
         {
-
-                dataGridView1.CurrentRow.Cells[4].Value = null;
+            dataGridView1.CurrentRow.Cells[4].Value = null;
         }
 
+        /// <summary>
+        /// Checks changes in the grid
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Initial_FormClosing(object sender, FormClosingEventArgs e)
         {
             var savedValues = ReadSavedJson();
             var currentValues = ReadDataSource();
 
-            var changedRecords = currentValues == null?null:savedValues.Except(currentValues, new RecordComparer()).ToList();
+            var changedRecords = currentValues == null ? new List<JsonRecord>() : savedValues.Except(currentValues, new RecordComparer()).ToList();
 
-
-            if (changedRecords!=null&&changedRecords.Any())
+            if (changedRecords.Any())
             {
-                DialogResult dlg = MessageBox.Show(ResManager.GetString("saveChangesMessage"), 
-                                    ResManager.GetString("saveChanges"), MessageBoxButtons.YesNo);
+                DialogResult dlg = MessageBox.Show(ResManager.GetString("saveChangesMessage"),
+                                    ResManager.GetString("saveChanges"), MessageBoxButtons.YesNoCancel);
 
                 if (dlg == DialogResult.Yes)
                 {
@@ -448,11 +427,44 @@ namespace Personalstamm
                 if (dlg == DialogResult.No)
                 {
                     e.Cancel = false;
-
                 }
-
+                if (dlg == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                }
             }
         }
+
+        /// <summary>
+        /// Updates grid visibility
+        /// </summary>
+        private void UpdateDataGridCOntrolsVisibility()
+        {
+            panel2.Visible = true;
+            button7.Visible = false;
+            button8.Visible = false;
+            button3.Visible = false;
+        }
+
+        /// <summary>
+        /// Loads gridview
+        /// </summary>
+        private void LoadMainDataPanel()
+        {
+            mainPanel.Visible = true;
+            groupBox2.Visible = false;
+            loadData();
+        }
+
+        /// <summary>
+        /// Hides add new record panel
+        /// </summary>
+        private void HideAddNewRecordPanel()
+        {
+            panel2.Visible = false;
+            button7.Visible = true;
+            button8.Visible = true;
+            button3.Visible = true;
+        }
     }
-    
 }

@@ -120,6 +120,9 @@
   <data name="browseImageNote" xml:space="preserve">
     <value>Click to change image</value>
   </data>
+  <data name="choosePicture" xml:space="preserve">
+    <value>Choose...</value>
+  </data>
   <data name="confirmationDeleteMessage" xml:space="preserve">
     <value>Are you sure to delete this item?</value>
   </data>

@@ -70,6 +70,15 @@ namespace Personalstamm {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Choose....
+        /// </summary>
+        internal static string choosePicture {
+            get {
+                return ResourceManager.GetString("choosePicture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure to delete this item?.
         /// </summary>
         internal static string confirmationDeleteMessage {
