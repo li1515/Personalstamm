@@ -124,6 +124,15 @@ namespace Personalstamm {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please enter only numbers..
+        /// </summary>
+        internal static string onlyNumbers {
+            get {
+                return ResourceManager.GetString("onlyNumbers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Changes.
         /// </summary>
         internal static string saveChanges {

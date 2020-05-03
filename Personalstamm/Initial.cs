@@ -118,9 +118,7 @@ namespace Personalstamm
                 byte[] imageByteArray = null;
                 if (File.Exists(openFileDialog1.FileName) && CheckIfFileIsImage(openFileDialog1.FileName))
                 {
-                    Image image = Image.FromFile(openFileDialog1.FileName);
-                    var resizedImage = Imager.Resize(image, 200, 300, true);
-                    imageByteArray = image != null ? imageToByteArray(resizedImage) : null;
+                    imageByteArray = ProcessImage(openFileDialog1.FileName);
                 }
 
                 //new JsonRecord object 
@@ -130,7 +128,7 @@ namespace Personalstamm
                     Name = name,
                     Gehalt = salary,
                     Aenderungsdatum = DateTime.Now,
-                    Bild = imageByteArray
+                    Bild = imageByteArray ?? ProcessImage("ChooseIcon.jpg")
                 };
 
                 var input = File.ReadAllText(DataPath);
@@ -357,12 +355,10 @@ namespace Personalstamm
 
                         if (File.Exists(openFileDialog1.FileName) && CheckIfFileIsImage(openFileDialog1.FileName))
                         {
-                            Image image = Image.FromFile(openFileDialog1.FileName);
-                            var resizedImage = Imager.Resize(image, 200, 300, true);
-                            imageByteArray = image != null ? imageToByteArray(resizedImage) : null;
+                            imageByteArray = ProcessImage(openFileDialog1.FileName);
                         }
                         openFileDialog1.FileName = string.Empty;
-                        dataGridView1.CurrentCell.Value = imageByteArray;
+                        dataGridView1.CurrentCell.Value = imageByteArray ?? ProcessImage("ChooseIcon.jpg");
                         var resultList = ReadDataSource();
                         SaveJson(resultList);
                         //refresh the grid
@@ -465,6 +461,24 @@ namespace Personalstamm
             button7.Visible = true;
             button8.Visible = true;
             button3.Visible = true;
+        }
+
+        private byte[] ProcessImage(string path)
+        {
+            byte[] imageByteArray;
+            Image image = Image.FromFile(path);
+            var resizedImage = Imager.Resize(image, 200, 300, true);
+            imageByteArray = image != null ? imageToByteArray(resizedImage) : null;
+            return imageByteArray;
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            if (System.Text.RegularExpressions.Regex.IsMatch(textBox3.Text, "[^0-9]"))
+            {
+                MessageBox.Show(ResManager.GetString("onlyNumbers"));
+                textBox3.Text = textBox3.Text.Remove(textBox3.Text.Length - 1);
+            }
         }
     }
 }

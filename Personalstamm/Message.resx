@@ -138,6 +138,9 @@
   <data name="emptyErrorText" xml:space="preserve">
     <value>Empty values not allowed!</value>
   </data>
+  <data name="onlyNumbers" xml:space="preserve">
+    <value>Please enter only numbers.</value>
+  </data>
   <data name="saveChanges" xml:space="preserve">
     <value>Changes</value>
   </data>
